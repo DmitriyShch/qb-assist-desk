@@ -6,16 +6,16 @@ import { createAPI } from "./create-api-server";
 // var db = firebase.firestore();
 const logRequests = true
 
-function saveInstance(instance) {
-  console.log("firestore saveInstance - " + stringify(instance));
+function saveApplication(application) {
+  console.log("firestore saveApplication - " + stringify(application));
   firebase
     .firestore()
-    .collection("instances")
-    .doc(instance.objectId)
-    .set(instance);
+    .collection("applications")
+    .doc(application.objectId)
+    .set(application);
     //     .add({
-    //   id: instance.id,
-    //   name: instance.name
+    //   id: application.id,
+    //   name: application.name
     // });
 }
 
@@ -90,4 +90,4 @@ function updateDoc(child, id, newObj) {
     .update(newObj)
 }
 
-export default { saveInstance, fetch, deleteDoc, updateDoc };
+export default { saveApplication, fetch, deleteDoc, updateDoc };

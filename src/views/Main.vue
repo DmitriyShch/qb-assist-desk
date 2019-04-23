@@ -1,7 +1,7 @@
 <template>
     <div id="main">
         <div id="nav">
-            <router-link to="/main/instances">Instances</router-link> |
+            <router-link to="/main/applications">Applications</router-link> |
             <router-link to="/main/settings">Settings</router-link>
         </div>
         <router-view />

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="$store.dispatch('SIGN_IN', () => $router.replace({ name: 'instances' }))">Sign In</button>
+    <button @click="$store.dispatch('SIGN_IN', () => $router.replace({ name: 'applications' }))">Sign In</button>
   </div>
 </template>
 <script>

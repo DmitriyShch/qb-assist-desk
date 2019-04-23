@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Instances from './views/Instances.vue'
-import InstanceCard from './views/InstanceCard.vue'
+import Applications from './views/Applications.vue'
+import ApplicationCard from './views/ApplicationCard.vue'
 import Login from './views/Login.vue'
 import Main from './views/Main.vue'
 import Settings from './views/Settings.vue'
-import InstanceManager from './views/InstanceManager.vue'
-import Channels from './views/Channels.vue'
-import ChannelCard from './views/ChannelCard.vue'
-import Nodes from './views/Nodes.vue'
+import ApplicationManager from './views/ApplicationManager.vue'
+import Forms from './views/Forms.vue'
+import FormCard from './views/FormCard.vue'
+import Structure from './views/Structure.vue'
 import Dashboard from './views/Dashboard.vue'
 import store from './store/store'
 
@@ -20,7 +20,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/main/instances'
+      redirect: '/main/applications'
     },
     {
       path: '/login',
@@ -40,35 +40,36 @@ const router = new Router({
           }
         },
         {
-          path: 'instances',
-          name: 'instances',
-          component: Instances
+          path: 'applications',
+          name: 'applications',
+          component: Applications
         },
         {
-          path: 'instanceCard',
-          name: 'instanceCard',
-          component: InstanceCard,
-          props: (route) => {
-            const instanceId = Number.parseInt(route.params.instanceId)
-            if (Number.isNaN(instanceId)) {
-              return { instanceId: 0 }
-            } else {
-              return { instanceId }
-            }
-          },
+          path: 'applicationCard',
+          name: 'applicationCard',
+          component: ApplicationCard,
+          props: true
+          // (route) => {
+          //   const applicationId = Number.parseInt(route.params.applicationId)
+          //   if (Number.isNaN(applicationId)) {
+          //     return { applicationId: 0 }
+          //   } else {
+          //     return { applicationId }
+          //   }
+          // },
         }
       ]
     },
     {
-      path: '/im/:instanceId',
-      name: 'instanceManager',
-      component: InstanceManager,
+      path: '/im/:applicationId',
+      name: 'applicationManager',
+      component: ApplicationManager,
       props: (route) => {
-        const instanceId = Number.parseInt(route.params.instanceId)
-        if (Number.isNaN(instanceId)) {
-          return { instanceId: 0 }
+        const applicationId = Number.parseInt(route.params.applicationId)
+        if (Number.isNaN(applicationId)) {
+          return { applicationId: 0 }
         } else {
-          return { instanceId }
+          return { applicationId }
         }
       },
       children: [
@@ -83,35 +84,35 @@ const router = new Router({
           path: 'nodes',
           name: 'nodes',
           components: {
-            b: Nodes
+            b: Structure
           } 
         },
         {
-          path: 'channels',
-          name: 'channels',
+          path: 'forms',
+          name: 'forms',
           components: {
-            b: Channels
+            b: Forms
           } 
         },
         { 
-          path: 'channels/:channelId',
-          name: 'channelCard',
+          path: 'forms/:formId',
+          name: 'formCard',
           props: {
             b: (route) => {
-              console.log('route.params.channelId', route.params.channelId)
-              return { channelId: route.params.channelId }
+              console.log('route.params.formId', route.params.formId)
+              return { formId: route.params.formId }
           }
         },
           components: {
-            b: ChannelCard
+            b: FormCard
           }
         },
         { 
-          path: 'channels/new',
-          name: 'newChannelCard',
+          path: 'forms/new',
+          name: 'newFormCard',
           props: false,
           components: {
-            b: ChannelCard
+            b: FormCard
           } 
         }
       ]
