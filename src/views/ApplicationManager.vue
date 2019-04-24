@@ -3,7 +3,7 @@
     <h1>Application Manager = {{applicationId}}</h1>
     <div id="nav">
       <router-link :to="{ name: 'dashboard' }">Dashboard</router-link> |
-      <router-link :to="{ name: 'nodes' }">Structure</router-link> |
+      <router-link :to="{ name: 'structure' }">Structure</router-link> |
       <router-link :to="{ name: 'forms' }">Forms</router-link> |
       <router-link :to="{ name: 'applications' }">Return to Applications</router-link>
     </div>

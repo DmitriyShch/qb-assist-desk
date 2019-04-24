@@ -81,8 +81,8 @@ const router = new Router({
           } 
         },
         {
-          path: 'nodes',
-          name: 'nodes',
+          path: 'structure',
+          name: 'structure',
           components: {
             b: Structure
           } 

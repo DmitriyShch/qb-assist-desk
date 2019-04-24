@@ -73,7 +73,7 @@ export default {
           .then(this.$router.push('applications'))
       } else {
         this.$store
-          .dispatch('updateApplication', {
+          .dispatch('application/updateApplication', {
             applicationId: this.originalApplicationId,
             updatedApplication: this.application
           })
