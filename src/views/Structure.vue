@@ -5,6 +5,8 @@
       <label for="structdetails" style="padding: 10px;">Structure details:</label>
       <textarea name="structdetails" id="structdetails" cols="30" rows="10"
         v-model="application.structure"></textarea>
+      <textarea name="parsedstruct" id="parsedstruct" cols="30" rows="10"
+        v-model="parsedStruct"></textarea>
       <button type="submit">Save</button>
     </div>
   </form>
@@ -12,7 +14,14 @@
 
 <script>
 import { stringify } from 'querystring';
+import StructParser from '../api/struct-parser';
+
 export default {
+  data() {
+    return {
+      parsedStruct: ''
+    }
+  },
   computed: {
     application() {
       return this.$store.state.application.currentApplication
@@ -26,7 +35,7 @@ export default {
         applicationId: this.application.id,
         updatedApplication: this.application
       })
-      // .then(this.$router.push('applications'))
+      .then(this.parsedStruct = StructParser.extParse(this.application.structure))
     }
   }
 }
