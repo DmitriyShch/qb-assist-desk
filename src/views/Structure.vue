@@ -8,6 +8,7 @@
       <textarea name="parsedstruct" id="parsedstruct" cols="30" rows="10"
         v-model="parsedStruct"></textarea>
       <button type="submit">Save</button>
+       <button @click="download">Download</button>
     </div>
   </form>
 </template>
@@ -15,6 +16,7 @@
 <script>
 import { stringify } from 'querystring';
 import StructParser from '../api/struct-parser';
+import HttpServer from  '../api/http-server'
 
 export default {
   data() {
@@ -36,7 +38,10 @@ export default {
         updatedApplication: this.application
       })
       .then(this.parsedStruct = StructParser.extParse(this.application.structure))
-    }
+    },
+     download() {
+       HttpServer.responseFile()
+     }
   }
 }
 </script>
