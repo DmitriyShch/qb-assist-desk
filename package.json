@@ -9,6 +9,8 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "cors": "^2.8.5",
     "firebase": "^5.8.6",
     "lru-cache": "^5.1.1",
     "md5": "^2.2.1",
