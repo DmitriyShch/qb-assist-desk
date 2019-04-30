@@ -18,7 +18,7 @@ import { stringify } from 'querystring'
 import StructParser from '../api/struct-parser'
 import axios from 'axios'
 import FbStorage from '../api/fb-storage'
-import Cors from 'cors'
+// import Cors from 'cors'
 
 // const cors = new Cors({ origin: true })
 // import HttpServer from  '../api/http-server'
@@ -27,8 +27,8 @@ export default {
   data() {
     return {
       parsedStruct: '',
-      url0:'https://avatars.mds.yandex.net/get-pdb/34158/455616f7-e715-4675-aa33-0bef2343d6e3/s1200',
-      url1: 'https://firebasestorage.googleapis.com/v0/b/qb-assist-desk.appspot.com/o/proj-vue-simple1.zip',
+      // url0:'https://avatars.mds.yandex.net/get-pdb/34158/455616f7-e715-4675-aa33-0bef2343d6e3/s1200',
+      // url1: 'https://firebasestorage.googleapis.com/v0/b/qb-assist-desk.appspot.com/o/proj-vue-simple1.zip',
       urlgs: 'gs://qb-assist-desk.appspot.com/proj-vue-simple1.zip'
     }
   },
@@ -52,23 +52,26 @@ export default {
       FbStorage.getStorageLink(this.urlgs)
         .then(url => {
           console.log('final url', url)
-          console.log('cors', Cors({ origin: true }))
-          axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
-          axios.get(url, 
-          { headers: {
+          // console.log('cors', Cors({ origin: true }))
+          // axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
+          const proxy = "https://cors-anywhere.herokuapp.com/"; // new line
+          axios.get(proxy+url, 
+          // { headers: {
+          //   'Access-Control-Allow-Origin': '*',
             // 'Accept': 'application/json',
             // 'Content-Type': 'application/json',
-            'Origin': '*',
-            'Access-Control-Request-Method': ['POST', 'GET','PUT','DELETE','PATCH','OPTIONS'],
-            'Access-Control-Allow-Credentials': true,
-            'Access-Control-Request-Headers': '*',
-            'Access-Control-Max-Age': 3600,                 // Cache (seconds)
-            'Access-Control-Expose-Headers': '*',
-            'Access-Control-Allow-Origin': '*'
+            // 'Origin': 'localhost:8080',
+            // 'Access-Control-Request-Method': ['POST', 'GET','PUT','DELETE','PATCH','OPTIONS'],
+            // 'Access-Control-Allow-Credentials': true,
+            // 'Access-Control-Request-Headers': '*',
+            // 'Access-Control-Max-Age': 3600,                 // Cache (seconds)
+            // 'Access-Control-Expose-Headers': '*',
+            // 'Access-Control-Allow-Origin': 'localhost:8080'
 
 
             // 'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
-            } })
+            // } }
+            )
             // responseType: 'arraybuffer',
             // headers: {
             //   "Access-Control-Allow-Origin": "*",
@@ -85,8 +88,8 @@ export default {
           //   // }
           // })
 
-          // .then(response => this.forceFileDownload3(response))
-          // .catch(err => console.log(err))
+          .then(response => this.forceFileDownload3(response))
+          .catch(err => console.log(err))
         })
     },
     forceFileDownload(response) {
