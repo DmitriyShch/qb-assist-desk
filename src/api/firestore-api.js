@@ -71,6 +71,44 @@ function fetch(child, returnDoc) {
   }
 }
 
+function fetchByDocId(child, returnDoc, docId) {
+  let api = createAPI()
+  logRequests && console.log(`fetching ${child}...`)
+  const cache = api.cachedItems
+  if (cache && cache.has(child)) {
+    logRequests && console.log(`cache hit for ${child}.`)
+    return Promise.resolve(cache.get(child))
+  } else {
+    return new Promise((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection(child)
+        .doc(docId)
+        .get()
+        .then(
+          doc => {
+            let fetched_data = []
+            console.log('!!! snapshot ' + child)
+            if (returnDoc) {
+              fetched_data.push(doc)
+            } else {
+              fetched_data.push(doc.data())
+            }
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            // console.log(stringify(doc))
+            // const val = doc.data()
+            // // mark the timestamp when this item is cached
+            // if (val) val.__lastUpdated = Date.now()
+            // cache && cache.set(child, val)
+            // logRequests && console.log(`fetched ${child}.`)
+            console.log('!!! final fetched_data ' + stringify(fetched_data))
+            resolve(fetched_data)
+        }, reject)
+    })
+  }
+}
+
 function deleteDoc(child, id) {
   console.log('function deleteDoc - ' + child + ' ' + id)
   return firebase
@@ -90,4 +128,4 @@ function updateDoc(child, id, newObj) {
     .update(newObj)
 }
 
-export default { saveApplication, fetch, deleteDoc, updateDoc };
+export default { saveApplication, fetch, deleteDoc, updateDoc, fetchByDocId };

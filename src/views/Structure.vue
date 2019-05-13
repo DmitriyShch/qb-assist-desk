@@ -9,7 +9,6 @@
         v-model="parsedStruct"></textarea>
       <button type="submit">Save</button>
       <button type="button" @click="download">Download</button>
-      <button type="button" @click="downloadLocal">Download to local</button>
     </div>
   </form>
 </template>
@@ -22,8 +21,7 @@ import FbStorage from '../api/fb-storage'
 export default {
   data() {
     return {
-      parsedStruct: '',
-      urlgs: 'gs://qb-assist-desk.appspot.com/proj-vue-simple1.zip'
+      parsedStruct: ''
     }
   },
   computed: {
@@ -43,23 +41,31 @@ export default {
     },
     download() {
       console.log('method download')
-      FbStorage.getStorageLink(this.urlgs)
-        .then(url => {
-          console.log('final url', url)
-          var xhr = new XMLHttpRequest();
-          xhr.responseType = 'blob';
-          xhr.onload = () => {
-            var data = xhr.response;
-            const url = window.URL.createObjectURL(new Blob([data]))
-            const link = document.createElement('a')
-            link.href = url
-            link.setAttribute('download', 'file.zip')
-            document.body.appendChild(link)
-            link.click()
-          };
-          xhr.open('GET', url);
-          xhr.send();
+
+      const templateUrlPromise = StructParser.getProjectTemplateUrl(this.application.structure)
+
+      templateUrlPromise
+        .then(urlgs => {
+          console.log('templateUrl then', urlgs)
+          FbStorage.getStorageLink(urlgs)
+            .then(url => {
+              console.log('final url', url)
+              var xhr = new XMLHttpRequest();
+              xhr.responseType = 'blob';
+              xhr.onload = () => {
+                var data = xhr.response;
+                const url = window.URL.createObjectURL(new Blob([data]))
+                const link = document.createElement('a')
+                link.href = url
+                link.setAttribute('download', 'file.zip')
+                document.body.appendChild(link)
+                link.click()
+              };
+              xhr.open('GET', url);
+              xhr.send();
+            })
         })
+        .catch(err => console.error(err))
     },
   }
 }

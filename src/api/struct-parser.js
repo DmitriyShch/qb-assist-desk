@@ -1,5 +1,6 @@
 import yaml from 'yaml'
 import { stringify } from 'querystring';
+import ProjectTemplatesApi from './project-templates-api'
 
 const parse = (textStruct) => {
   console.log('parse:', textStruct)
@@ -41,4 +42,43 @@ const extParse = (textStruct) => {
   return resText
 }
 
-export default { parse, extParse }
+const getProjectTemplateName = (textStruct) => {
+  console.log('getProjectTemplateName:', textStruct)
+  let result = null
+  let doc = parse(textStruct)
+  if (doc.app.front.framework == 'vuejs') {
+    if (doc.app.auth_prov == 'google') {
+      result = 'proj2-with-auth'
+    } else {
+      result = 'vue-simple-proj1'
+    }
+  }
+  return result
+}
+
+const getProjectTemplateUrl = (textStruct) => {
+  console.log('getProjectTemplate:', textStruct)
+  return new Promise((resolve, reject) => {
+  
+  let templateName = getProjectTemplateName(textStruct)
+
+  console.log('templateName', templateName)
+
+  if (templateName == null) {
+    return reject('No such template')
+  }
+  
+  let projTmplPromise = ProjectTemplatesApi.getProjectTemplate(templateName)
+
+  console.log('projTmplPromise', projTmplPromise)
+
+  projTmplPromise
+    .then(res => {
+      console.log('projTmplPromise then', res)
+      resolve(res[0].url)
+    })
+    .catch(err => reject(err))
+  })
+}
+
+export default { parse, extParse, getProjectTemplateName, getProjectTemplateUrl }

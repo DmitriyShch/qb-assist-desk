@@ -1,11 +1,7 @@
-import FirestoreApi from '../../api/firestore-api'
-import { stringify } from 'querystring'
+import FirestoreApi from './firestore-api'
 
 const getProjectTemplate = (key) => {
-  FirestoreApi.fetch('project_templates', false, key)
-    .then(res => {
-      stringify(res)
-    })
+  return FirestoreApi.fetchByDocId('project_templates', false, key)
 }
 
 export default { getProjectTemplate }
