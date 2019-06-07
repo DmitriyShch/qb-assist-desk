@@ -54,6 +54,22 @@ export const actions = {
           console.log(user.email)
           // [START_EXCLUDE]
           commit('SET_USER', user)
+
+          console.log("stringify(result.credential)")
+          console.log(stringify(result.credential))
+
+
+          // firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+          firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+            // Send token to your backend via HTTPS
+            console.log("idToken - SIGN_IN")
+            console.log(idToken)
+            // firebase.auth().signInWithCustomToken(idToken)
+          }).catch(function(error) {
+            console.error(error)
+          });
+
+
           // console.log(callback)
           callback && callback()
         } else {
@@ -84,6 +100,19 @@ export const actions = {
           if (callbackSignIn) {
             callbackSignIn()
           }
+
+
+
+          firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+            // Send token to your backend via HTTPS
+            console.log("idToken - checkLogin")
+            console.log(idToken)
+          }).catch(function(error) {
+            console.error(error)
+          });
+
+
+
           resolve(user.email)
         } else {
           console.log('User is not logged in.');
