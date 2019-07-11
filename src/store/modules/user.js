@@ -9,7 +9,8 @@ export const state = {
   0  - not logined
   1  - logined
   */
-  loginState: -2 // 
+  loginState: -2,
+  idToken: null
 }
 
 export const mutations = {
@@ -28,6 +29,10 @@ export const mutations = {
   SET_LOGIN_STATE: (state, loginState) => {
     console.log('mutations_SET_LOGIN_STATE - loginState', loginState)
     state.loginState = loginState
+  },
+  SET_ID_TOKEN: (state, idToken) => {
+    console.log('mutations_SET_ID_TOKEN - idToken', idToken)
+    state.idToken = idToken
   },
 }
 
@@ -64,6 +69,7 @@ export const actions = {
             // Send token to your backend via HTTPS
             console.log("idToken - SIGN_IN")
             console.log(idToken)
+            commit('SET_ID_TOKEN', idToken)
             // firebase.auth().signInWithCustomToken(idToken)
           }).catch(function(error) {
             console.error(error)
@@ -101,17 +107,14 @@ export const actions = {
             callbackSignIn()
           }
 
-
-
           firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
             // Send token to your backend via HTTPS
             console.log("idToken - checkLogin")
             console.log(idToken)
+            commit('SET_ID_TOKEN', idToken)
           }).catch(function(error) {
             console.error(error)
           });
-
-
 
           resolve(user.email)
         } else {
@@ -137,5 +140,10 @@ export const getters = {
   userInfo: (state) => {
     console.log('userInfo - ', !!(state.user))
     return state.user != null ? state.user.email : ''
+  },
+  idToken: (state) => {
+    console.log('8888888')
+    console.log('state.idToken', state.idToken)
+    return state.idToken
   }
 }

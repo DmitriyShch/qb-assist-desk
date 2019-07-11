@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Applications from './views/Applications.vue'
 import ApplicationCard from './views/ApplicationCard.vue'
+import Templates from './views/Templates.vue'
 import Login from './views/Login.vue'
 import Main from './views/Main.vue'
 import Settings from './views/Settings.vue'
@@ -38,6 +39,11 @@ const router = new Router({
           components: {
             b: Settings
           }
+        },
+        {
+          path: 'templates',
+          name: 'templates',
+          component: Templates
         },
         {
           path: 'applications',
