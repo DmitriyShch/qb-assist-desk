@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Applications from './views/Applications.vue'
 import ApplicationCard from './views/ApplicationCard.vue'
 import Templates from './views/Templates.vue'
+import TemplateCard from './views/TemplateCard.vue'
 import Login from './views/Login.vue'
 import Main from './views/Main.vue'
 import Settings from './views/Settings.vue'
@@ -44,6 +45,12 @@ const router = new Router({
           path: 'templates',
           name: 'templates',
           component: Templates
+        },
+        {
+          path: 'templateCard',
+          name: 'templateCard',
+          component: TemplateCard,
+          props: true
         },
         {
           path: 'applications',

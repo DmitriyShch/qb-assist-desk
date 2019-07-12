@@ -14,7 +14,7 @@ export const mutations = {
   ADD_TEMPLATE: (state, template) => {
     console.log('mutation ADD_TEMPLATE', stringify(template))
     state.templates.push(template)
-    FirestoreApi.saveTemplate(template)
+    // FirestoreApi.saveTemplate(template)
   },
   SET_TEMPLATES: (state, templates) => {
     console.log('mutation SET_TEMPLATES', stringify(templates))
@@ -41,7 +41,11 @@ export const mutations = {
 export const actions = {
   createTemplate: ({ commit }, template) => {
     console.log('action createTemplate', stringify(template))
-    commit('ADD_TEMPLATE', template)
+    template_api.createTemplate(template)
+    .then(data => {
+      console.log(JSON.stringify(data))
+      commit('ADD_TEMPLATE', template)
+    })
   },
   loadTemplates: ({ commit }) => {
     console.log('000_loadTemplates')
