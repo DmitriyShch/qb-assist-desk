@@ -26,4 +26,18 @@ const getProjectTemplates = () => {
   // return FirestoreApi.fetchByDocId('project_templates', false, key)
 }
 
-export default { getProjectTemplate, getProjectTemplates }
+const deleteTemplate = (id) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${store.state.user.idToken}`,
+    }
+  }
+  console.log('deleteTemplate', id)
+  return new Promise((resolve, reject) => {
+   http.delete(`api/templates/${id}`, config)
+    .then(resolve('DELETED SUCCESSFUL'))
+    .catch(err => reject(err))
+  })
+}
+
+export default { getProjectTemplate, getProjectTemplates, deleteTemplate }

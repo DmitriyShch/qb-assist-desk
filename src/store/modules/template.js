@@ -6,7 +6,7 @@ import { stringify } from 'querystring'
 export const namespaced = true
 
 export const state = {
-  currentTemplate: null,
+  // currentTemplate: null,
   templates: []
 }
 
@@ -21,10 +21,10 @@ export const mutations = {
     templates.sort((a, b) => (a.name > b.name) ? 1 : ((a.name < b.name) ? -1 : 0))
     state.templates = templates
   },
-  SET_CURRENT_TEMPLATE: (state, template) => {
-    console.log('mutation SET_CURRENT_TEMPLATE', stringify(template))
-    state.currentTemplate = template
-  },
+  // SET_CURRENT_TEMPLATE: (state, template) => {
+  //   console.log('mutation SET_CURRENT_TEMPLATE', stringify(template))
+  //   state.currentTemplate = template
+  // },
   UPDATE_TEMPLATE: (state, { oldTemplateId, newTemplate }) => {
     console.log('mutation UPDATE_TEMPLATE', oldTemplateId, stringify(newTemplate))
     let newTemplateArray = state.templates.filter(a => a.id != oldTemplateId)
@@ -91,16 +91,20 @@ export const actions = {
   },
   deleteTemplate: ({ commit }, templateId) => {
     console.log('action deleteTemplate', templateId)
-    FirestoreApi.fetch('templates', true).then(templates => {
-      let templateForDelArray = templates.filter(template => template.data().id == templateId)
-      if (templateForDelArray && templateForDelArray.length > 0) {
-        let templateForDel = templateForDelArray[0]
-        console.log('templateForDel', templateForDel.id +
-          ' ' + stringify(templateForDel))
-        FirestoreApi.deleteDoc('templates', templateForDel.id)
-          .then(() => commit('REMOVE_TEMPLATE', templateId))
-      }
+    template_api.deleteTemplate(templateId)
+    .then(data => {
+      console.log(JSON.stringify(data))
+      commit('REMOVE_TEMPLATE', templateId)
     })
+    // FirestoreApi.fetch('templates', true).then(templates => {
+    //   let templateForDelArray = templates.filter(template => template.data().id == templateId)
+    //   if (templateForDelArray && templateForDelArray.length > 0) {
+    //     let templateForDel = templateForDelArray[0]
+    //     console.log('templateForDel', templateForDel.id +
+    //       ' ' + stringify(templateForDel))
+    //     FirestoreApi.deleteDoc('templates', templateForDel.id)
+    //       .then(() => commit('REMOVE_TEMPLATE', templateId))
+    //   }
   }
 }
 

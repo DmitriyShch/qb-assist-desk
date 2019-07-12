@@ -3,11 +3,11 @@
     <h1>Program Templates</h1>
     <button @click='onAddTemplateClick'><h1>Create Template</h1></button>
     <ul>
-      <li v-for="Template in Templates" :key="Template.id">
+      <li v-for="template in templates" :key="template.id">
         <div>
-          <a href="#" @click.prevent="editTemplate(Template.id)">{{ Template.name }} ({{ Template.id }})</a>
-          <button @click='deleteTemplate(Template.id)'>Delete</button>
-          <router-link :to="{ name: 'TemplateManager', params: { TemplateId: Template.id } }">Manage</router-link>
+          <a href="#" @click.prevent="editTemplate(Template.id)">{{ template.name }} ({{ template.id }})</a>
+          <button @click='deleteTemplate(template.id)'>Delete</button>
+          <router-link :to="{ name: 'TemplateManager', params: { templateId: template.id } }">Manage</router-link>
         </div>
       </li>
     </ul>
@@ -16,8 +16,8 @@
 <script>
 export default {
   computed: {
-    Templates() {
-      return this.$store.state.Template.Templates
+    templates() {
+      return this.$store.state.template.templates
     }
   },
   methods: {
@@ -26,11 +26,11 @@ export default {
     },
     deleteTemplate(id) {
       console.log('Try delete Template ' + id)
-      this.$store.dispatch('Template/deleteTemplate', id)
+      this.$store.dispatch('template/deleteTemplate', id)
     },
     editTemplate(id) {
       console.log('editTemplate ' + id)
-      this.$router.push({ name: 'TemplateCard', params: { TemplateId: id } })
+      this.$router.push({ name: 'TemplateCard', params: { templateId: id } })
     },
   },
   beforeMount() {
