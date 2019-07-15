@@ -3,8 +3,12 @@
     <div class="template-create">
       <label for="id">Id</label>
       <input id="id" type="text" v-model="template.id">
-      <label for="name">Name</label>
-      <input id="name" type="text" v-model="template.name">
+      <label for="url">File url</label>
+      <input id="url" type="text" v-model="template.data.url">
+      <label for="template">Details</label>
+     <!--  <input id="name" type="text" v-model="template.name"> -->
+      <textarea name="template" id="template" cols="30" rows="10"
+        v-model="template.data.template"></textarea>
       <button type="submit">{{saveButtonText}}</button>
     </div>
   </form>
@@ -22,13 +26,17 @@ export default {
     },
   },
   data() {
-    let tmpTemplate = {}
+    let tmpTemplate = {
+      data: {}
+    }
     console.log('TemplateCard - data - templateId:', this.templateId)
     if (this.templateId != null) {
       this.$store.dispatch('template/setCurrentTemplateById', this.templateId)
         .then((template) => {
           template.isNew = false
           this.template = template
+          this.originalTemplateId = template.id
+          console.log('456', JSON.stringify(template))
         })
         .catch((err) => {
           console.log(err)
@@ -40,6 +48,8 @@ export default {
       tmpTemplate = this.createNewTemplate()
       tmpTemplate.isNew = true
     }
+
+    console.log('123123', JSON.stringify(tmpTemplate))
 
     return {
       template: tmpTemplate,

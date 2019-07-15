@@ -5,9 +5,9 @@
     <ul>
       <li v-for="template in templates" :key="template.id">
         <div>
-          <a href="#" @click.prevent="editTemplate(Template.id)">{{ template.name }} ({{ template.id }})</a>
+          <a href="#" @click.prevent="editTemplate(template.id)">{{ template.name }} ({{ template.id }})</a>
           <button @click='deleteTemplate(template.id)'>Delete</button>
-          <router-link :to="{ name: 'TemplateManager', params: { templateId: template.id } }">Manage</router-link>
+          <router-link :to="{ name: 'templateManager', params: { templateId: template.id } }">Manage</router-link>
         </div>
       </li>
     </ul>
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     onAddTemplateClick() {
-      this.$router.push('TemplateCard')
+      this.$router.push('templateCard')
     },
     deleteTemplate(id) {
       console.log('Try delete Template ' + id)
@@ -30,7 +30,7 @@ export default {
     },
     editTemplate(id) {
       console.log('editTemplate ' + id)
-      this.$router.push({ name: 'TemplateCard', params: { templateId: id } })
+      this.$router.push({ name: 'templateCard', params: { templateId: id } })
     },
   },
   beforeMount() {

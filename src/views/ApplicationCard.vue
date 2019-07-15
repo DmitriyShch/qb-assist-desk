@@ -29,6 +29,7 @@ export default {
         .then((application) => {
           application.isNew = false
           this.application = application
+          this.originalApplicationId = application.id
         })
         .catch((err) => {
           console.log(err)
