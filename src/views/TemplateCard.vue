@@ -5,6 +5,8 @@
       <input id="id" type="text" v-model="template.id">
       <label for="url">File url</label>
       <input id="url" type="text" v-model="template.data.url">
+      <label for="url2">File url2</label>
+      <input id="url2" type="file" @change="onFileChange" />
       <label for="template">Details</label>
      <!--  <input id="name" type="text" v-model="template.name"> -->
       <textarea name="template" id="template" cols="30" rows="10"
@@ -17,6 +19,7 @@
 <script>
 import { stringify } from 'querystring';
 import utils from '../api/utils';
+import config from '../../config/config';
 
 export default {
   props: {
@@ -88,6 +91,13 @@ export default {
             updatedTemplate: this.template
           })
           .then(this.$router.push('templates'))
+      }
+    },
+    onFileChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (files.length) {
+        console.log('file0 - ', files[0])
+        this.template.data.url = config.firebase_path_prefix + files[0].name
       }
     }
   }
