@@ -17,19 +17,95 @@
       </div>
       <textarea name="template" id="template" cols="30" rows="10"
         v-model="template.data.template"></textarea>
+      <!-- <div>
+        <div style="border: dotted">
+          <label for="fileName2">FileName2222</label>
+          <input id="fileName2" name="fileName2" v-model="templateObj2.FileName"/>
+        </div>
+        <ul>
+          <li v-for="tmplFile in filesObj.FILES" :key="tmplFile.FileName">
+            <div style="border: solid; color: pink">
+              <div style="border: dotted">
+                <label for="fileName">FileName</label>
+                <input id="fileName" name="fileName" v-model="tmplFile.FileName"/>
+              </div>
+              <div style="border: dotted">
+                <label for="info">Info</label>
+                <input id="info" name="info" v-model="tmplFile.Info"/>
+              </div>
+              <div style="border: dotted">
+                <label for="name">Name</label>
+                <input id="name" name="name" v-model="tmplFile.Name"/>
+              </div>
+              <a href="#" @click.prevent="editTemplate(tmplFile.FileName)">{{ tmplFile.Info }} ({{ tmplFile.Name }})</a>
+              <button @click='deleteTemplate(tmplFile.FileName)'>Delete</button>
+            </div>
+          </li>
+        </ul>
+      </div> -->
       <button type="submit">{{saveButtonText}}</button>
     </div>
     </div>
+
+    <div id="demo">
+      <form id="search">
+        Search <input name="query" v-model="searchQuery">
+      </form>
+      <DemoGrid
+        :heroes="filesObj.FILES"
+        :columns="fileColumns"
+        :filter-key="searchQuery">
+      </DemoGrid>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th v-for="key in this.fileColumns"
+            v-bind:key="key">
+            {{ key }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <input id='Name' v-model="currFile.Name" />
+          </td>
+          <td>
+            <input id='FileName' type='file' @change="onFileChange" />
+          </td>
+          <td>
+            <input id='Storage' v-model="currFile.Storage" />
+          </td>
+          <td>
+            <input id='Path' v-model="currFile.Path" />
+          </td>
+          <td>
+            <input id='Info' v-model="currFile.Info" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      <button @click="addFileToTemplate" type="button">Add File</button>
+    </div>
+
   </form>
 </template>
 
 <script>
 import { stringify } from 'querystring';
 import utils from '../api/utils';
+import yaml from 'yaml';
 import templates_api from '../api/project-templates-api';
 import config from '../../config/config';
+import DemoGrid from "@/components/DemoGrid.vue"
 
 export default {
+  components: {
+    DemoGrid
+  },
   props: {
     templateId: {
       type: String,
@@ -47,6 +123,7 @@ export default {
           template.isNew = false
           this.template = template
           this.originalTemplateId = template.id
+          this.filesObj = yaml.parse(template.data.template)
           console.log('456', JSON.stringify(template))
         })
         .catch((err) => {
@@ -64,13 +141,46 @@ export default {
 
     return {
       template: tmpTemplate,
-      originalTemplateId: tmpTemplate.id
+      originalTemplateId: tmpTemplate.id,
+      filesObj: {},
+      gridColumns: ['name', 'power'],
+      fileColumns: ['Name', 'FileName', 'Storage', 'Path', 'Info'],
+      gridData: [
+        { name: 'Chuck Norris22', power: Infinity },
+        { name: 'Bruce Lee', power: 9000 },
+        { name: 'Jackie Chan', power: 7000 },
+        { name: 'Jet Li', power: 8000 }
+      ],
+      searchQuery: '',
+      currFile: {}
     };
   },
   computed: {
     saveButtonText() {
       return this.template.isNew ? 'Create' : 'Update'
-    }
+    },
+    templateObj() {
+      return yaml.parse(this.template.data.template)
+    },
+  },
+  watch: {
+    // 'templateObj.FILES.FileName': {
+    //   handler(val){
+    //     console.log('templateObj Changed!', val);
+    //   },
+    //   deep: true
+    // },
+    'filesObj.FILES': {
+      // handler(newVal, oldVal){
+      handler(){
+        console.log('templateObj Changed!');
+        // console.log('templateObj Changed!', JSON.stringify(newVal), JSON.stringify(oldVal));
+      },
+      deep: true
+    },
+    // 'filesObj.FILES': function (newVal, oldVal){
+    //     console.log('filesObj.FILES Changed!', newVal, oldVal);
+    // }
   },
   methods: {
     createNewTemplate() {
@@ -104,8 +214,10 @@ export default {
     onFileChange(e) {
       var files = e.target.files || e.dataTransfer.files;
       if (files.length) {
-        console.log('file0 - ', files[0])
-        this.template.data.url = config.firebase_path_prefix + files[0].name
+        console.log('file00 - ', files[0])
+        //config.firebase_path_prefix + 
+        this.currFile.FileName = files[0].name
+        console.log('this.currFile.FileName - ', this.currFile.FileName)        
       }
     },
     uploadFile(e) {
@@ -118,6 +230,10 @@ export default {
           templates_api.acceptTemplateFile(files[0].name)
         })
       }
+    },
+    addFileToTemplate() {
+      console.log('this.currFile - ', this.currFile)  
+      this.filesObj.FILES.push(this.currFile)
     }
   }
 };
