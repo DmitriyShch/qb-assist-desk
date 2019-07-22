@@ -2,6 +2,7 @@ import "firebase/auth"
 // import FirestoreApi from '../../api/firestore-api'
 import template_api from '../../api/project-templates-api'
 import { stringify } from 'querystring'
+import yaml from 'yaml'
 
 export const namespaced = true
 
@@ -24,6 +25,7 @@ export const mutations = {
   SET_CURRENT_TEMPLATE: (state, template) => {
     console.log('mutation SET_CURRENT_TEMPLATE', stringify(template))
     state.currentTemplate = template
+    state.currentTemplate.object = yaml.parse(template.data.template)
   },
   UPDATE_TEMPLATE: (state, { oldTemplateId, newTemplate }) => {
     console.log('mutation UPDATE_TEMPLATE', oldTemplateId, stringify(newTemplate))
@@ -35,6 +37,31 @@ export const mutations = {
   REMOVE_TEMPLATE: (state, templateId) => {
     console.log('mutation REMOVE_TEMPLATE', templateId)
     state.templates = state.templates.filter(a => a.id != templateId)
+  },
+  ADD_FILE_TO_CURRENT_TEMPLATE: (state, fileDetails) => {
+    console.log('ADD_FILE_TO_CURRENT_TEMPLATE', JSON.stringify(fileDetails))
+    if (!state.currentTemplate || !fileDetails) {
+      console.warn('currentTemplate or fileDetails is null')
+      return
+    }
+    if (!state.currentTemplate.object.FILES) {
+      state.currentTemplate.object.FILES = {}
+    }
+    state.currentTemplate.object.FILES = state.currentTemplate.object.FILES.filter(a => a.Name != fileDetails.Name)
+    state.currentTemplate.object.FILES.push(fileDetails)
+    state.currentTemplate.data.template = yaml.stringify(state.currentTemplate.object)
+  },
+  REMOVE_FILE_FROM_CURRENT_TEMPLATE: (state, fileDetails) => {
+    console.log('ADD_FILE_TO_CURRENT_TEMPLATE', JSON.stringify(fileDetails))
+    if (!state.currentTemplate || !fileDetails ||
+      !state.currentTemplate.object || !state.currentTemplate.object.FILES) {
+      return
+    }
+    if (!state.currentTemplate.object.FILES) {
+      state.currentTemplate.object.FILES = {}
+    }
+    state.currentTemplate.object.FILES = state.currentTemplate.object.FILES.filter(a => a.Name != fileDetails.Name)
+    state.currentTemplate.data.template = yaml.stringify(state.currentTemplate.object)
   },
 }
 
@@ -131,6 +158,10 @@ export const actions = {
     //     FirestoreApi.deleteDoc('templates', templateForDel.id)
     //       .then(() => commit('REMOVE_TEMPLATE', templateId))
     //   }
+  },
+  addFileToCurrentTemplate: ({ commit }, fileDetails) => {
+    console.log('action addFileToCurrentTemplate', fileDetails)
+    commit('ADD_FILE_TO_CURRENT_TEMPLATE', fileDetails)
   }
 }
 
@@ -142,5 +173,12 @@ export const getters = {
     let ids = state.templates.map(inst => inst.id)
     let newId = Math.max(...ids) + 1
     return newId
-  }
+  },
+  getTemplate_Files: (state) => {
+    if (!state.currentTemplate || !state.currentTemplate.object ||
+        state.currentTemplate.object.FILES) {
+      return ''
+    }
+    return yaml.stringify(state.currentTemplate.object.FILES)
+  },
 }

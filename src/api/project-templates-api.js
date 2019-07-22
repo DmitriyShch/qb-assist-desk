@@ -64,12 +64,12 @@ const getTemplateFileUploadToken = () => {
   })
 }
 
-const uploadTemplateFile = (file) => {
+const uploadTemplateFile = (file, templateId) => {
   console.log('uploadTemplateFile', file.name)
   return new Promise((resolve, reject) => {
     getTemplateFileUploadToken()
       .then(ctoken => {
-        fbStorage.uploadTmpFile(file, ctoken)
+        fbStorage.uploadTmpFile(file, ctoken, templateId)
           .then((data) => {
             console.log('fbStorage.uploadTmpFile completed')
             resolve(data)
@@ -80,11 +80,12 @@ const uploadTemplateFile = (file) => {
     })
 }
 
-const acceptTemplateFile = (fileName) => {
+const acceptTemplateFile = (fileName, templateId) => {
   console.log('acceptTemplateFile', fileName)
   return new Promise((resolve, reject) => {
     const data = {
-      file_name: fileName
+      file_name: fileName,
+      subfolder: templateId
     }
     http.post('api/templates/files/upload/acceptfile', data, getAuthConfig())
     .then(resp => {
