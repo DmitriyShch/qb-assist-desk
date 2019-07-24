@@ -27,7 +27,7 @@
           id="template_files2"
           cols="30"
           rows="10"
-          v-model="getTemplate_Files3"
+          v-model="files_str"
         ></textarea>
         <label for="template_template">TEMPLATE</label>
         <textarea
@@ -63,7 +63,7 @@
           </li>
         </ul>
         </div>-->
-        <button type="submit">{{saveButtonText}}</button>
+        <button type="submit">{{ saveButtonText }}</button>
       </div>
     </div>
 
@@ -72,7 +72,7 @@
         Search
         <input name="query" v-model="searchQuery" />
       </form>
-      <DemoGrid :heroes="template.object.FILES" :columns="fileColumns" :filter-key="searchQuery"></DemoGrid>
+      <DemoGrid :heroes="template.object.FILES" :columns="fileColumns" :filter-key="searchQuery "></DemoGrid>
     </div>
 
     <table>
@@ -109,14 +109,13 @@
 </template>
 
 <script>
-import { stringify } from "querystring";
-import utils from "../api/utils";
-import yaml from "yaml";
+import { stringify } from 'querystring'
+import utils from '../api/utils'
+import yaml from 'yaml'
 // import path2 from 'path';
-import templates_api from "../api/project-templates-api";
+import templates_api from '../api/project-templates-api'
 // import config from '../../config/config';
-import DemoGrid from "@/components/DemoGrid.vue";
-import { mapGetters } from "vuex";
+import DemoGrid from '@/components/DemoGrid.vue'
 
 // export default {
 //   computed: mapGetters(["userInfo", "userIsLogged"])
@@ -136,158 +135,136 @@ export default {
     let tmpTemplate = {
       data: {},
       object: {}
-    };
-    console.log("TemplateCard - data - templateId:", this.templateId);
+    }
+    console.log('TemplateCard - data - templateId:', this.templateId)
     if (this.templateId != null) {
       this.$store
-        .dispatch("template/setCurrentTemplateById", this.templateId)
+        .dispatch('template/setCurrentTemplateById', this.templateId)
         .then(template => {
-          console.log("111_template:", template);
-          template.isNew = false;
-          this.template = template;
-          this.originalTemplateId = template.id;
-          this.filesObj = yaml.parse(template.data.template);
-          console.log("456", JSON.stringify(template));
+          console.log('111_template:', template)
+          template.isNew = false
+          this.template = template
+          this.originalTemplateId = template.id
+          console.log('456', JSON.stringify(template))
         })
         .catch(err => {
-          console.log(err);
-          tmpTemplate = this.createNewTemplate();
-          tmpTemplate.isNew = true;
-          this.template = tmpTemplate;
-        });
+          console.log(err)
+          tmpTemplate = this.createNewTemplate()
+          tmpTemplate.isNew = true
+          this.template = tmpTemplate
+        })
     } else {
-      tmpTemplate = this.createNewTemplate();
-      tmpTemplate.isNew = true;
+      tmpTemplate = this.createNewTemplate()
+      tmpTemplate.isNew = true
     }
 
-    console.log("123123", JSON.stringify(tmpTemplate));
+    console.log('123123', JSON.stringify(tmpTemplate))
 
     return {
       template: tmpTemplate,
       originalTemplateId: tmpTemplate.id,
-      filesObj: {},
-      gridColumns: ["name", "power"],
-      fileColumns: ["Name", "FileName", "Storage", "Path", "Info"],
+      gridColumns: ['name', 'power'],
+      fileColumns: ['Name', 'FileName', 'Storage', 'Path', 'Info'],
       gridData: [
-        { name: "Chuck Norris22", power: Infinity },
-        { name: "Bruce Lee", power: 9000 },
-        { name: "Jackie Chan", power: 7000 },
-        { name: "Jet Li", power: 8000 }
+        { name: 'Chuck Norris22', power: Infinity },
+        { name: 'Bruce Lee', power: 9000 },
+        { name: 'Jackie Chan', power: 7000 },
+        { name: 'Jet Li', power: 8000 }
       ],
-      searchQuery: "",
-      currFile: {}
-    };
+      searchQuery: '',
+      currFile: {},
+      files_str: ''
+    }
   },
   computed: {
-    ...mapGetters({getTemplate_Files3: 'template/getTemplate_Files'}),
     saveButtonText() {
-      return this.template.isNew ? "Create" : "Update";
+      return this.template.isNew ? 'Create' : 'Update'
     },
-    // template_files() {
-    //   // console.log('777:', JSON.stringify(this.template.object.FILES))
-    //   // console.log('7771:', this.template.object.FILES)
-    //   // console.log('7772:', this.template.object)
-    //   // console.log('7773:', this.template)
-    //   // return JSON.stringify(this.template.object.FILES)
-    //   // return yaml.stringify(this.template.object.FILES)
-    //   return this.$store.getters["template/getTemplate_Files"];
-    // },
     template_template() {
-      return yaml.stringify(this.template.object["SCRIPT-TMPL"]);
+      return yaml.stringify(this.template.object['SCRIPT-TMPL'])
     }
   },
   watch: {
-    // 'templateObj.FILES.FileName': {
-    //   handler(val){
-    //     console.log('templateObj Changed!', val);
-    //   },
-    //   deep: true
-    // },
-    "filesObj.FILES": {
-      // handler(newVal, oldVal){
+    template: {
       handler() {
-        console.log("templateObj Changed!");
-        // console.log('templateObj Changed!', JSON.stringify(newVal), JSON.stringify(oldVal));
+        console.log('template.object.FILES Changed!')
+        this.files_str = yaml.stringify(this.template.object.FILES)
       },
       deep: true
     }
-    // 'filesObj.FILES': function (newVal, oldVal){
-    //     console.log('filesObj.FILES Changed!', newVal, oldVal);
-    // }
   },
   methods: {
     createNewTemplate() {
-      let objectId = utils.getNewGuid();
-      let newid = this.$store.getters['template/getNewTemplateId'];
+      let objectId = utils.getNewGuid()
+      let newid = this.$store.getters['template/getNewTemplateId']
       return {
         objectId: objectId,
         id: newid,
-        name: "template - " + newid,
-        forms: [{ id: 1, name: "form1" }, { id: 2, name: "form2" }]
-      };
+        name: 'template - ' + newid,
+        forms: [{ id: 1, name: 'form1' }, { id: 2, name: 'form2' }]
+      }
     },
     save() {
-      console.log("save", stringify(this.template));
+      console.log('save', stringify(this.template))
       if (this.template.isNew) {
         this.$store
-          .dispatch("template/createTemplate", this.template)
-          .then(this.$router.push("templates"));
+          .dispatch('template/createTemplate', this.template)
+          .then(this.$router.push('templates'))
       } else {
         this.$store
-          .dispatch("template/updateTemplate", {
+          .dispatch('template/updateTemplate', {
             templateId: this.originalTemplateId,
             updatedTemplate: this.template
           })
-          .then(this.$router.push("templates"));
+          .then(this.$router.push('templates'))
       }
     },
     onFileChange(e) {
-      var files = e.target.files || e.dataTransfer.files;
+      var files = e.target.files || e.dataTransfer.files
       if (files.length) {
-        console.log("file00 - ", files[0]);
+        console.log('file00 - ', files[0])
         //config.firebase_path_prefix +
-        this.currFile.FileName = files[0].name;
-        console.log("this.currFile.FileName - ", this.currFile.FileName);
+        this.currFile.FileName = files[0].name
+        console.log('this.currFile.FileName - ', this.currFile.FileName)
       }
     },
     uploadFile(e) {
-      console.log(e);
-      var files = document.getElementById("FileName").files;
+      console.log(e)
+      var files = document.getElementById('FileName').files
       if (files.length) {
-        console.log("file00 - ", files[0]);
+        console.log('file00 - ', files[0])
         templates_api
           .uploadTemplateFile(files[0], this.template.id)
           .then(filePath => {
             templates_api
               .acceptTemplateFile(files[0].name, this.template.id)
               .then(() => {
-                console.log("filePath:", filePath);
-                let s1 = files[0].name;
-                let shortName = s1.replace(/\..+$/, "");
+                console.log('filePath:', filePath)
+                let s1 = files[0].name
+                let shortName = s1.replace(/\..+$/, '')
 
                 // let shortName = files[0].name.replace(/\..+$/, '')(files[0].name)
-                console.log("shortName:", shortName);
-                this.$set(this.currFile, "Name", shortName);
-                this.$set(this.currFile, "FileName", files[0].name);
-                this.$set(this.currFile, "Path", filePath);
-                this.$set(this.currFile, "Storage", "firebase-storage");
+                console.log('shortName:', shortName)
+                this.$set(this.currFile, 'Name', shortName)
+                this.$set(this.currFile, 'FileName', files[0].name)
+                this.$set(this.currFile, 'Path', filePath)
+                this.$set(this.currFile, 'Storage', 'firebase-storage')
 
                 // this.currFile.Path = filePath
-                console.log("currFile:", this.currFile);
-              });
-          });
+                console.log('currFile:', this.currFile)
+              })
+          })
       }
     },
     addFileToTemplate() {
-      console.log("this.currFile - ", this.currFile);
+      console.log('this.currFile - ', this.currFile)
       this.$store
-        .dispatch("template/addFileToCurrentTemplate", this.currFile)
+        .dispatch('template/addFileToCurrentTemplate', this.currFile)
         .then(() => {
-          console.log("template.object.FILES", this.template.object.FILES);
-        });
-      this.currFile = {};
-      // this.filesObj.FILES.push(this.currFile)
+          console.log('template.object.FILES', this.template.object.FILES)
+        })
+      this.currFile = {}
     }
   }
-};
+}
 </script>

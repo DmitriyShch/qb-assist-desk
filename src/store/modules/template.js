@@ -26,6 +26,9 @@ export const mutations = {
     console.log('mutation SET_CURRENT_TEMPLATE', stringify(template))
     state.currentTemplate = template
     state.currentTemplate.object = yaml.parse(template.data.template)
+    state.currentTemplate.FILES_STR = yaml.stringify(
+      state.currentTemplate.object.FILES
+    )
   },
   UPDATE_TEMPLATE: (state, { oldTemplateId, newTemplate }) => {
     console.log(
@@ -188,15 +191,5 @@ export const getters = {
     let ids = state.templates.map(inst => inst.id)
     let newId = Math.max(...ids) + 1
     return newId
-  },
-  getTemplate_Files: state => {
-    if (
-      !state.currentTemplate ||
-      !state.currentTemplate.object ||
-      state.currentTemplate.object.FILES
-    ) {
-      return ''
-    }
-    return yaml.stringify(state.currentTemplate.object.FILES)
   }
 }
