@@ -1,7 +1,9 @@
 <template>
   <div class="Templates">
     <h1>Program Templates</h1>
-    <button @click='onAddTemplateClick'><h1>Create Template</h1></button>
+    <button @click="onAddTemplateClick">
+      <h1>Create Template</h1>
+    </button>
     <ul>
       <li v-for="template in templates" :key="template.id">
         <div>
@@ -31,7 +33,7 @@ export default {
     editTemplate(id) {
       console.log('editTemplate ' + id)
       this.$router.push({ name: 'templateCard', params: { templateId: id } })
-    },
+    }
   },
   beforeMount() {
     if (this.$root._isMounted) {

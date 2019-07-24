@@ -1,4 +1,4 @@
-import "firebase/auth"
+import 'firebase/auth'
 // import FirestoreApi from '../../api/firestore-api'
 import template_api from '../../api/project-templates-api'
 import { stringify } from 'querystring'
@@ -19,7 +19,7 @@ export const mutations = {
   },
   SET_TEMPLATES: (state, templates) => {
     console.log('mutation SET_TEMPLATES', stringify(templates))
-    templates.sort((a, b) => (a.name > b.name) ? 1 : ((a.name < b.name) ? -1 : 0))
+    templates.sort((a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0))
     state.templates = templates
   },
   SET_CURRENT_TEMPLATE: (state, template) => {
@@ -28,10 +28,14 @@ export const mutations = {
     state.currentTemplate.object = yaml.parse(template.data.template)
   },
   UPDATE_TEMPLATE: (state, { oldTemplateId, newTemplate }) => {
-    console.log('mutation UPDATE_TEMPLATE', oldTemplateId, stringify(newTemplate))
+    console.log(
+      'mutation UPDATE_TEMPLATE',
+      oldTemplateId,
+      stringify(newTemplate)
+    )
     let newTemplateArray = state.templates.filter(a => a.id != oldTemplateId)
     newTemplateArray.push(newTemplate)
-    newTemplateArray.sort((a, b) => (a.id > b.id) ? 1 : ((a.id < b.id) ? -1 : 0))
+    newTemplateArray.sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0))
     state.templates = newTemplateArray
   },
   REMOVE_TEMPLATE: (state, templateId) => {
@@ -47,37 +51,47 @@ export const mutations = {
     if (!state.currentTemplate.object.FILES) {
       state.currentTemplate.object.FILES = {}
     }
-    state.currentTemplate.object.FILES = state.currentTemplate.object.FILES.filter(a => a.Name != fileDetails.Name)
+    state.currentTemplate.object.FILES = state.currentTemplate.object.FILES.filter(
+      a => a.Name != fileDetails.Name
+    )
     state.currentTemplate.object.FILES.push(fileDetails)
-    state.currentTemplate.data.template = yaml.stringify(state.currentTemplate.object)
+    state.currentTemplate.data.template = yaml.stringify(
+      state.currentTemplate.object
+    )
   },
   REMOVE_FILE_FROM_CURRENT_TEMPLATE: (state, fileDetails) => {
     console.log('ADD_FILE_TO_CURRENT_TEMPLATE', JSON.stringify(fileDetails))
-    if (!state.currentTemplate || !fileDetails ||
-      !state.currentTemplate.object || !state.currentTemplate.object.FILES) {
+    if (
+      !state.currentTemplate ||
+      !fileDetails ||
+      !state.currentTemplate.object ||
+      !state.currentTemplate.object.FILES
+    ) {
       return
     }
     if (!state.currentTemplate.object.FILES) {
       state.currentTemplate.object.FILES = {}
     }
-    state.currentTemplate.object.FILES = state.currentTemplate.object.FILES.filter(a => a.Name != fileDetails.Name)
-    state.currentTemplate.data.template = yaml.stringify(state.currentTemplate.object)
-  },
+    state.currentTemplate.object.FILES = state.currentTemplate.object.FILES.filter(
+      a => a.Name != fileDetails.Name
+    )
+    state.currentTemplate.data.template = yaml.stringify(
+      state.currentTemplate.object
+    )
+  }
 }
 
 export const actions = {
   createTemplate: ({ commit }, template) => {
     console.log('action createTemplate', stringify(template))
-    template_api.createTemplate(template)
-    .then(data => {
+    template_api.createTemplate(template).then(data => {
       console.log(JSON.stringify(data))
       commit('ADD_TEMPLATE', template)
     })
   },
   loadTemplates: ({ commit }) => {
     console.log('000_loadTemplates')
-    template_api.getProjectTemplates()
-    .then(data => {
+    template_api.getProjectTemplates().then(data => {
       console.log(JSON.stringify(data))
       commit('SET_TEMPLATES', data)
     })
@@ -97,7 +111,7 @@ export const actions = {
         reject()
       }
     })
-    // 
+    //
     //   FirestoreApi.fetch('templates', false).then(templates => {
     //     let templatesArray = templates.filter(template => template.id == templateId)
     //     if (templatesArray && templatesArray.length > 0) {
@@ -112,15 +126,17 @@ export const actions = {
   },
   updateTemplate: ({ commit }, { templateId, updatedTemplate }) => {
     console.log('action updateTemplate templateId - ', templateId)
-    console.log('action updateTemplate updatedTemplate - ', JSON.stringify(updatedTemplate))
-    template_api.updateTemplate(updatedTemplate)
-      .then(data => {
-        console.log(JSON.stringify(data))
-        commit('UPDATE_TEMPLATE', {
-          oldTemplateId: templateId,
-          newTemplate: updatedTemplate
-        })
+    console.log(
+      'action updateTemplate updatedTemplate - ',
+      JSON.stringify(updatedTemplate)
+    )
+    template_api.updateTemplate(updatedTemplate).then(data => {
+      console.log(JSON.stringify(data))
+      commit('UPDATE_TEMPLATE', {
+        oldTemplateId: templateId,
+        newTemplate: updatedTemplate
       })
+    })
 
     // FirestoreApi.fetch('templates', true).then(templates => {
     //   let templateForUpdArray = templates.filter(template => template.data().id == templateId)
@@ -132,7 +148,7 @@ export const actions = {
     //         oldTemplateId: templateId,
     //         newTemplate: updatedTemplate
     //       }))
-      // }
+    // }
     // })
   },
   resetCurrentTemplate: ({ commit }) => {
@@ -144,8 +160,7 @@ export const actions = {
   },
   deleteTemplate: ({ commit }, templateId) => {
     console.log('action deleteTemplate', templateId)
-    template_api.deleteTemplate(templateId)
-    .then(data => {
+    template_api.deleteTemplate(templateId).then(data => {
       console.log(JSON.stringify(data))
       commit('REMOVE_TEMPLATE', templateId)
     })
@@ -166,7 +181,7 @@ export const actions = {
 }
 
 export const getters = {
-  getNewTemplateId: (state) => {
+  getNewTemplateId: state => {
     if (state.templates == null || state.templates.length == 0) {
       return 0
     }
@@ -174,11 +189,14 @@ export const getters = {
     let newId = Math.max(...ids) + 1
     return newId
   },
-  getTemplate_Files: (state) => {
-    if (!state.currentTemplate || !state.currentTemplate.object ||
-        state.currentTemplate.object.FILES) {
+  getTemplate_Files: state => {
+    if (
+      !state.currentTemplate ||
+      !state.currentTemplate.object ||
+      state.currentTemplate.object.FILES
+    ) {
       return ''
     }
     return yaml.stringify(state.currentTemplate.object.FILES)
-  },
+  }
 }
