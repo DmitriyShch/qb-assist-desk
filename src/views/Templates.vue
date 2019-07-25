@@ -7,9 +7,12 @@
     <ul>
       <li v-for="template in templates" :key="template.id">
         <div>
-          <a href="#" @click.prevent="editTemplate(template.id)">{{ template.name }} ({{ template.id }})</a>
-          <button @click='deleteTemplate(template.id)'>Delete</button>
-          <router-link :to="{ name: 'templateManager', params: { templateId: template.id } }">Manage</router-link>
+          <a
+            href="#"
+            @click.prevent="editTemplate(template.id)"
+          >{{ template.name }} ({{ template.id }})</a>
+          <button @click="deleteTemplate(template.id)">Delete</button>
+          <!-- <router-link :to="{ name: 'templateManager', params: { templateId: template.id } }">Manage</router-link> -->
         </div>
       </li>
     </ul>

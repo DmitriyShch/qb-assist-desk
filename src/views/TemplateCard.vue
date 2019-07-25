@@ -72,7 +72,14 @@
         Search
         <input name="query" v-model="searchQuery" />
       </form>
-      <DemoGrid :heroes="template.object.FILES" :columns="fileColumns" :filter-key="searchQuery "></DemoGrid>
+      <DemoGrid
+        :tableId="'fileGrid'"
+        :keyColumn="'FileName'"
+        :heroes="template.object.FILES"
+        :columns="fileColumns"
+        :filter-key="searchQuery"
+        :markColumn="'Mark'"
+      ></DemoGrid>
     </div>
 
     <table>
@@ -104,6 +111,7 @@
     <div>
       <button type="button" v-on:click="uploadFile">Upload</button>
       <button @click="addFileToTemplate" type="button">Add File</button>
+      <button @click="removeFileFromTemplate" type="button">Remove File</button>
     </div>
   </form>
 </template>
@@ -164,7 +172,7 @@ export default {
       template: tmpTemplate,
       originalTemplateId: tmpTemplate.id,
       gridColumns: ['name', 'power'],
-      fileColumns: ['Name', 'FileName', 'Storage', 'Path', 'Info'],
+      fileColumns: ['Name', 'FileName', 'Storage', 'Path', 'Info', 'Mark'],
       gridData: [
         { name: 'Chuck Norris22', power: Infinity },
         { name: 'Bruce Lee', power: 9000 },
@@ -263,6 +271,35 @@ export default {
         .then(() => {
           console.log('template.object.FILES', this.template.object.FILES)
         })
+      this.currFile = {}
+    },
+    removeFileFromTemplate() {
+      console.log('this.currFile - ', this.currFile)
+      console.log(this.$children)
+      console.log(this.$children[0].selectedRows)
+      let selRows = this.$children[0].selectedRows
+      for (let sr in selRows) {
+        console.log(selRows[sr])
+        this.$store
+          .dispatch('template/removeFileFromCurrentTemplate', selRows[sr])
+          .then(() => {
+            console.log('template.object.FILES', this.template.object.FILES)
+          })
+      }
+      // var table = document.getElementById('mytab1')
+      // for (var i = 0, row; (row = table.rows[i]); i++) {
+      //   //iterate through rows
+      //   //rows would be accessed using the "row" variable assigned in the for loop
+      //   for (var j = 0, col; (col = row.cells[j]); j++) {
+      //     //iterate through columns
+      //     //columns would be accessed using the "col" variable assigned in the for loop
+      //   }
+      // }
+      // this.$store
+      //   .dispatch('template/addFileToCurrentTemplate', this.currFile)
+      //   .then(() => {
+      //     console.log('template.object.FILES', this.template.object.FILES)
+      //   })
       this.currFile = {}
     }
   }

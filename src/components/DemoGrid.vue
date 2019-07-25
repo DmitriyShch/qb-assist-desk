@@ -1,21 +1,29 @@
 <template>
-  <table>
+  <table :id="tableId">
     <thead>
       <tr>
-        <th v-for="key in columns"
+        <th
+          v-for="key in columns"
           @click="sortBy(key)"
           v-bind:key="key"
-          :class="{ active: sortKey == key }">
+          :class="{ active: sortKey == key }"
+        >
           {{ key | capitalize }}
-          <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-          </span>
+          <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
         </th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="entry in filteredHeroes" v-bind:key="entry.name">
         <td v-for="key in columns" v-bind:key="key">
-          {{entry[key]}}
+          {{ entry[key] }}
+          <input
+            type="checkbox"
+            v-show="key == markColumn"
+            name="markColumn"
+            id="markColumn"
+            @change="markColumnChange($event, entry[keyColumn])"
+          />
         </td>
       </tr>
     </tbody>
@@ -27,35 +35,43 @@ export default {
   template: '#grid-template',
   name: 'demo-grid',
   props: {
+    tableId: String,
+    keyColumn: String,
     heroes: Array,
     columns: Array,
-    filterKey: String
+    filterKey: String,
+    markColumn: String
   },
-  data: function () {
+  data: function() {
     var sortOrders = {}
-    this.columns.forEach(function (key) {
+    this.columns.forEach(function(key) {
       sortOrders[key] = 1
     })
     return {
       sortKey: '',
-      sortOrders: sortOrders
+      sortOrders: sortOrders,
+      selectedRows: []
     }
   },
   computed: {
-    filteredHeroes: function () {
+    filteredHeroes: function() {
       var sortKey = this.sortKey
       var filterKey = this.filterKey && this.filterKey.toLowerCase()
       var order = this.sortOrders[sortKey] || 1
       var heroes = this.heroes
       if (filterKey) {
-        heroes = heroes.filter(function (row) {
-          return Object.keys(row).some(function (key) {
-            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
+        heroes = heroes.filter(function(row) {
+          return Object.keys(row).some(function(key) {
+            return (
+              String(row[key])
+                .toLowerCase()
+                .indexOf(filterKey) > -1
+            )
           })
         })
       }
       if (sortKey) {
-        heroes = heroes.slice().sort(function (a, b) {
+        heroes = heroes.slice().sort(function(a, b) {
           a = a[sortKey]
           b = b[sortKey]
           return (a === b ? 0 : a > b ? 1 : -1) * order
@@ -65,14 +81,26 @@ export default {
     }
   },
   filters: {
-    capitalize: function (str) {
+    capitalize: function(str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
     }
   },
   methods: {
-    sortBy: function (key) {
+    sortBy: function(key) {
       this.sortKey = key
       this.sortOrders[key] = this.sortOrders[key] * -1
+    },
+    markColumnChange(e, t1) {
+      console.log('markColumnChange')
+      console.log(e)
+      console.log(t1)
+      if (e.target.checked && !this.selectedRows[t1]) {
+        this.selectedRows.push(t1)
+      }
+      if (!e.target.checked && !this.selectedRows[t1]) {
+        this.selectedRows = this.selectedRows.filter(x => x != t1)
+      }
+      console.log(this.selectedRows)
     }
   }
 }
@@ -93,7 +121,7 @@ table {
 
 th {
   background-color: #42b983;
-  color: rgba(255,255,255,0.66);
+  color: rgba(255, 255, 255, 0.66);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -102,15 +130,16 @@ th {
 }
 
 tbody tr:hover {
-  background-color: #9c6416 !important; /* Цвет фона под ссылкой */ 
-  color: rgb(255, 227, 253); /* Цвет ссылки */ 
+  background-color: #9c6416 !important; /* Цвет фона под ссылкой */
+  color: rgb(255, 227, 253); /* Цвет ссылки */
 }
 
 tbody tr {
   background-color: #cca1c8;
 }
 
-th, td {
+th,
+td {
   min-width: 120px;
   padding: 10px 20px;
 }

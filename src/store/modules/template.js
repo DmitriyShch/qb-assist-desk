@@ -62,11 +62,11 @@ export const mutations = {
       state.currentTemplate.object
     )
   },
-  REMOVE_FILE_FROM_CURRENT_TEMPLATE: (state, fileDetails) => {
-    console.log('ADD_FILE_TO_CURRENT_TEMPLATE', JSON.stringify(fileDetails))
+  REMOVE_FILE_FROM_CURRENT_TEMPLATE: (state, fileName) => {
+    console.log('REMOVE_FILE_FROM_CURRENT_TEMPLATE', fileName)
     if (
+      !fileName ||
       !state.currentTemplate ||
-      !fileDetails ||
       !state.currentTemplate.object ||
       !state.currentTemplate.object.FILES
     ) {
@@ -76,7 +76,7 @@ export const mutations = {
       state.currentTemplate.object.FILES = {}
     }
     state.currentTemplate.object.FILES = state.currentTemplate.object.FILES.filter(
-      a => a.Name != fileDetails.Name
+      a => a.FileName != fileName
     )
     state.currentTemplate.data.template = yaml.stringify(
       state.currentTemplate.object
@@ -180,6 +180,10 @@ export const actions = {
   addFileToCurrentTemplate: ({ commit }, fileDetails) => {
     console.log('action addFileToCurrentTemplate', fileDetails)
     commit('ADD_FILE_TO_CURRENT_TEMPLATE', fileDetails)
+  },
+  removeFileFromCurrentTemplate: ({ commit }, fileName) => {
+    console.log('action removeFileFromCurrentTemplate', fileName)
+    commit('REMOVE_FILE_FROM_CURRENT_TEMPLATE', fileName)
   }
 }
 
