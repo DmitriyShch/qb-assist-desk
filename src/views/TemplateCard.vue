@@ -224,7 +224,10 @@ export default {
             templateId: this.originalTemplateId,
             updatedTemplate: this.template
           })
-          .then(this.$router.push('templates'))
+          .then(data => {
+            console.log(data)
+            this.$router.push('templates')
+          })
       }
     },
     onFileChange(e) {
@@ -238,40 +241,73 @@ export default {
     },
     uploadFile(e) {
       console.log(e)
-      var files = document.getElementById('FileName').files
-      if (files.length) {
-        console.log('file00 - ', files[0])
-        templates_api
-          .uploadTemplateFile(files[0], this.template.id)
-          .then(filePath => {
-            templates_api
-              .acceptTemplateFile(files[0].name, this.template.id)
-              .then(() => {
-                console.log('filePath:', filePath)
-                let s1 = files[0].name
-                let shortName = s1.replace(/\..+$/, '')
-
-                // let shortName = files[0].name.replace(/\..+$/, '')(files[0].name)
-                console.log('shortName:', shortName)
-                this.$set(this.currFile, 'Name', shortName)
-                this.$set(this.currFile, 'FileName', files[0].name)
-                this.$set(this.currFile, 'Path', filePath)
-                this.$set(this.currFile, 'Storage', 'firebase-storage')
-
-                // this.currFile.Path = filePath
-                console.log('currFile:', this.currFile)
-              })
-          })
-      }
+      this.uploadFileImpl()
     },
+    uploadFileImpl() {
+      console.log('uploadFileImpl')
+      return new Promise((resolve, reject) => {
+        var files = document.getElementById('FileName').files
+        if (files.length) {
+          console.log('file00 - ', files[0])
+          templates_api
+            .uploadTemplateFile(files[0], this.template.id)
+            .then(filePath => {
+              templates_api
+                .acceptTemplateFile(files[0].name, this.template.id)
+                .then(() => {
+                  console.log('filePath:', filePath)
+                  let s1 = files[0].name
+                  let shortName = s1.replace(/\..+$/, '')
+
+                  // let shortName = files[0].name.replace(/\..+$/, '')(files[0].name)
+                  console.log('shortName:', shortName)
+                  this.$set(this.currFile, 'Name', shortName)
+                  this.$set(this.currFile, 'FileName', files[0].name)
+                  this.$set(this.currFile, 'Path', filePath)
+                  this.$set(this.currFile, 'Storage', 'firebase-storage')
+
+                  // this.currFile.Path = filePath
+                  console.log('currFile:', this.currFile)
+                  resolve('uploadFileImpl successful')
+                })
+                .catch(err => reject(err))
+            })
+        }
+      })
+    },
+    addFileToTemplateImpl() {
+      console.log('addFileToTemplateImpl')
+      return new Promise((resolve, reject) => {
+        this.$store
+          .dispatch('template/addFileToCurrentTemplate', this.currFile)
+          .then(() => {
+            console.log('template.object.FILES', this.template.object.FILES)
+            resolve('addFileToTemplateImpl successful')
+          })
+          .catch(err => reject(err))
+        this.currFile = {}
+      })
+    },
+
     addFileToTemplate() {
       console.log('this.currFile - ', this.currFile)
-      this.$store
-        .dispatch('template/addFileToCurrentTemplate', this.currFile)
-        .then(() => {
-          console.log('template.object.FILES', this.template.object.FILES)
-        })
-      this.currFile = {}
+      return new Promise((resolve, reject) => {
+        if (this.currFile.Name) {
+          return this.addFileToTemplateImpl().then(() => {
+            this.currFile = {}
+            resolve('addFileToTemplateImpl successful')
+          })
+        } else {
+          this.uploadFileImpl()
+            .then(() => {
+              this.addFileToTemplateImpl().then(() => {
+                this.currFile = {}
+                resolve('addFileToTemplateImpl successful')
+              })
+            })
+            .catch(err => reject(err))
+        }
+      })
     },
     removeFileFromTemplate() {
       console.log('this.currFile - ', this.currFile)

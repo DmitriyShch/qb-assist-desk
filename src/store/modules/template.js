@@ -65,7 +65,6 @@ export const mutations = {
   REMOVE_FILE_FROM_CURRENT_TEMPLATE: (state, fileName) => {
     console.log('REMOVE_FILE_FROM_CURRENT_TEMPLATE', fileName)
     if (
-      !fileName ||
       !state.currentTemplate ||
       !state.currentTemplate.object ||
       !state.currentTemplate.object.FILES
@@ -128,19 +127,24 @@ export const actions = {
     //   })
   },
   updateTemplate: ({ commit }, { templateId, updatedTemplate }) => {
-    console.log('action updateTemplate templateId - ', templateId)
+    console.log('action UPDATE_TEMPLATE templateId - ', templateId)
     console.log(
       'action updateTemplate updatedTemplate - ',
       JSON.stringify(updatedTemplate)
     )
-    template_api.updateTemplate(updatedTemplate).then(data => {
-      console.log(JSON.stringify(data))
-      commit('UPDATE_TEMPLATE', {
-        oldTemplateId: templateId,
-        newTemplate: updatedTemplate
-      })
+    return new Promise((resolve, reject) => {
+      template_api
+        .updateTemplate(updatedTemplate)
+        .then(data => {
+          console.log(JSON.stringify(data))
+          commit('UPDATE_TEMPLATE', {
+            oldTemplateId: templateId,
+            newTemplate: updatedTemplate
+          })
+          resolve('updateTemplate successful')
+        })
+        .catch(err => reject(err))
     })
-
     // FirestoreApi.fetch('templates', true).then(templates => {
     //   let templateForUpdArray = templates.filter(template => template.data().id == templateId)
     //   if (templateForUpdArray && templateForUpdArray.length > 0) {
