@@ -33,10 +33,12 @@ const createTemplate = (template) => {
 
 const updateTemplate = (template) => {
   console.log('updateTemplate', JSON.stringify(template))
-  const data = {
-    "url": template.data.url,
-    "template": template.data.template
-  }
+  const data = template.data
+  // const data = {
+  //   "url": template.data.url,
+  //   "intent": template.data.intent,
+  //   "template": template.data.template
+  // }
   return new Promise((resolve, reject) => {
    http.post(`api/templates/${template.id}`, data, getAuthConfig())
     .then(resolve('UPDATED SUCCESSFUL'))
@@ -89,6 +91,7 @@ const acceptTemplateFile = (fileName, templateId) => {
     }
     http.post('api/templates/files/upload/acceptfile', data, getAuthConfig())
     .then(resp => {
+      console.log('resp.data:', resp.data)
       resolve(resp.data)
     })
     .catch(err => reject(err))

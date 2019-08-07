@@ -19,7 +19,7 @@ export const mutations = {
   },
   SET_TEMPLATES: (state, templates) => {
     console.log('mutation SET_TEMPLATES', stringify(templates))
-    templates.sort((a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0))
+    // templates.sort((a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0))
     state.templates = templates
   },
   SET_CURRENT_TEMPLATE: (state, template) => {
@@ -38,7 +38,7 @@ export const mutations = {
     )
     let newTemplateArray = state.templates.filter(a => a.id != oldTemplateId)
     newTemplateArray.push(newTemplate)
-    newTemplateArray.sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0))
+    // newTemplateArray.sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0))
     state.templates = newTemplateArray
   },
   REMOVE_TEMPLATE: (state, templateId) => {

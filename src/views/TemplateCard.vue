@@ -6,6 +6,8 @@
         <input id="id" type="text" v-model="template.id" />
         <label for="url">File url</label>
         <input id="url" type="text" v-model="template.data.url" />
+        <label for="intent">Intent</label>
+        <input id="intent" type="text" v-model="template.data.intent" />
         <!--  <input id="name" type="text" v-model="template.name"> -->
         <div>
           <!-- <form action="http://localhost:3000/api/templates/files/upload" method="post" enctype="multipart/form-data"> -->
@@ -254,8 +256,9 @@ export default {
             .then(filePath => {
               templates_api
                 .acceptTemplateFile(files[0].name, this.template.id)
-                .then(() => {
+                .then((newPath) => {
                   console.log('filePath:', filePath)
+                  console.log('newPath:', newPath)
                   let s1 = files[0].name
                   let shortName = s1.replace(/\..+$/, '')
 
@@ -263,7 +266,7 @@ export default {
                   console.log('shortName:', shortName)
                   this.$set(this.currFile, 'Name', shortName)
                   this.$set(this.currFile, 'FileName', files[0].name)
-                  this.$set(this.currFile, 'Path', filePath)
+                  this.$set(this.currFile, 'Path', newPath)
                   this.$set(this.currFile, 'Storage', 'firebase-storage')
 
                   // this.currFile.Path = filePath
