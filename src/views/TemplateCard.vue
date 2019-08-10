@@ -8,6 +8,11 @@
         <input id="url" type="text" v-model="template.data.url" />
         <label for="intent">Intent</label>
         <input id="intent" type="text" v-model="template.data.intent" />
+        <label for="result_type">Result type</label>
+        <select id="result_type" v-model="template.data.result_type">
+          <option>message</option>
+          <option>script</option>
+        </select>
         <!--  <input id="name" type="text" v-model="template.name"> -->
         <div>
           <!-- <form action="http://localhost:3000/api/templates/files/upload" method="post" enctype="multipart/form-data"> -->
