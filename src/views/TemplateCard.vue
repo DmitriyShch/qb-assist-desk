@@ -215,6 +215,8 @@ export default {
       return {
         objectId: objectId,
         id: newid,
+        data: {},
+        object: {},
         name: 'template - ' + newid,
         forms: [{ id: 1, name: 'form1' }, { id: 2, name: 'form2' }]
       }
